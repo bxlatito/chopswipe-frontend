@@ -9,7 +9,7 @@ import VendorDashboard from "./pages/VendorDashboard";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import Profile from "./pages/Profile";
-import ProtectedRoute from "./components/ProtectedRoute"; // ← ADD THIS LINE
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (

@@ -24,7 +24,6 @@ function Cart() {
   const handleRemove = async (listing_id) => {
     try {
       await api.delete(`/swipes/cart/${listing_id}`);
-      // Remove from local state so UI updates instantly without refetching
       setCartItems((prev) =>
         prev.filter((item) => item.listing.id !== listing_id)
       );
@@ -39,25 +38,26 @@ function Cart() {
       <Display text="My Cart" />
 
       {cartItems.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
+        <p className="text-center text-gray-500 mt-10 px-4">
           You haven't saved anything yet. Go swipe some food! 🍽️
         </p>
       )}
 
-      <div className="w-4/6 mx-auto mt-8 grid grid-cols-3 gap-6">
+      {/* Mobile: 1 column, Laptop: 3 columns */}
+      <div className="w-full md:w-4/6 mx-auto mt-8 px-4 md:px-0 grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         {cartItems.map((item) => (
           <div
             key={item.cart_item_id}
-            className="border-2 border-black rounded-2xl overflow-hidden"
+            className="border-2 border-black rounded-2xl overflow-hidden w-full"
           >
             <div className="relative">
               <img
                 src={item.listing.image_urls[0] || food_holder}
                 alt={item.listing.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-64 md:h-48 object-cover"
               />
               <div
-                className="absolute bottom-3 right-3 text-white font-bold text-lg"
+                className="absolute bottom-3 right-3 text-white font-bold text-lg md:text-base"
                 style={{ textShadow: "1px 1px 3px black" }}
               >
                 <p>{item.listing.title}</p>
@@ -65,17 +65,17 @@ function Cart() {
               </div>
             </div>
 
-            <div className="p-3 flex justify-center items-center">
-              <div className="flex gap-2">
+            <div className="p-4 flex justify-center items-center">
+              <div className="flex gap-3 w-full justify-center">
                 <Link
                   to={`/listings/${item.listing.id}`}
-                  className="text-sm font-bold border-2 border-black px-3 py-1 rounded-xl hover:bg-black hover:text-white transition"
+                  className="text-sm font-bold border-2 border-black px-4 py-2 rounded-xl hover:bg-black hover:text-white transition text-center"
                 >
                   See More
                 </Link>
                 <button
                   onClick={() => handleRemove(item.listing.id)}
-                  className="text-sm font-bold border-2 border-red-500 text-red-500 px-3 py-1 rounded-xl hover:bg-red-500 hover:text-white transition"
+                  className="text-sm font-bold border-2 border-red-500 text-red-500 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition text-center"
                 >
                   Remove
                 </button>

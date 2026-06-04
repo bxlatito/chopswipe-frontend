@@ -40,7 +40,8 @@ function Homepage() {
     <>
       <Navbar />
 
-      <div className="flex flex-row justify-center items-center flex-wrap">
+      {/* Desktop layout (hidden on mobile) */}
+      <div className="hidden md:flex flex-row justify-center items-center flex-wrap">
         <div className="ml-40">
           <SwipingButton direction="left" onClick={() => handleSwipe("left")} />
         </div>
@@ -76,6 +77,41 @@ function Homepage() {
         <div className="mr-40">
           <SwipingButton direction="right" onClick={() => handleSwipe("right")} />
         </div>
+      </div>
+
+      {/* Mobile layout (visible only on screens smaller than 768px) */}
+      <div className="md:hidden flex flex-col items-center justify-center px-4 py-4">
+        {current ? (
+          <>
+            <div className="w-full max-w-2xl mx-auto">
+              <img
+                src={current.image_urls[0] || food_holder}
+                alt={current.title}
+                className="w-full h-auto max-h-[70vh] object-cover border-4 border-black rounded-2xl"
+              />
+              <div className="mt-4 text-center">
+                <p className="font-bold text-2xl">{current.title}</p>
+                <p className="font-bold text-xl">#{current.price}</p>
+                <Link
+                  to={`/listings/${current.id}`}
+                  className="text-blue-500 hover:underline inline-block mt-2"
+                >
+                  see more...
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex flex-row justify-center gap-8 mt-8 w-full max-w-md">
+              <SwipingButton direction="left" onClick={() => handleSwipe("left")} />
+              <SwipingButton direction="right" onClick={() => handleSwipe("right")} />
+            </div>
+          </>
+        ) : (
+          <div className="w-full max-w-md mx-auto mt-8 text-center font-bold text-2xl border-4 border-black rounded-2xl p-10">
+            <p>No more listings! 🍽️</p>
+            <p className="text-gray-500 text-lg mt-2">Check back later</p>
+          </div>
+        )}
       </div>
     </>
   );
