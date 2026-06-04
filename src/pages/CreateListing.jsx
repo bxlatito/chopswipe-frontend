@@ -1,0 +1,179 @@
+// CreateListing.jsx
+import { useState } from "react";
+import { FaHome, FaCartPlus, FaUser, FaCog } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Display from "../components/Display";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
+
+function CreateListing() {
+  const inputStyle = "border-2 border-black mt-5 w-full p-2 rounded-xl";
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    is_negotiable: true,
+    hashtags: "",
+    image_urls: [],
+  });
+
+  const [preview, setPreview] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result is the base64 string
+      setPreview(reader.result);
+      setFormData((prev) => ({
+        ...prev,
+        image_urls: [reader.result], // store as array to match backend
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Convert price to number and hashtags to array
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price),
+        hashtags: formData.hashtags
+          ? formData.hashtags.split(",").map((h) => h.trim())
+          : [],
+        // category is required by backend — using a default since you removed it from the form
+        category: "Main Meal",
+      };
+
+      await api.post("/listings/", payload);
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.detail || "Failed to create listing");
+    }
+  };
+
+  return (
+    <>
+      <Navbar />
+
+      <Display text="Create Listing" />
+
+      <div className="w-3/6 mx-auto mt-6 border-2 border-black rounded-2xl p-6 mb-10">
+        <form onSubmit={handleSubmit}>
+          <input
+            className={inputStyle}
+            type="text"
+            name="title"
+            placeholder="Food Title e.g. Jollof Rice"
+            value={formData.title}
+            onChange={handleChange}
+          />
+
+          <textarea
+            className={`${inputStyle} h-32 resize-none`}
+            name="description"
+            placeholder="Description — what's in it, how it's made, serving size..."
+            value={formData.description}
+            onChange={handleChange}
+          />
+
+          <input
+            className={inputStyle}
+            type="number"
+            name="price"
+            placeholder="Price e.g. 2700"
+            value={formData.price}
+            onChange={handleChange}
+          />
+
+          <input
+            className={inputStyle}
+            type="text"
+            name="hashtags"
+            placeholder="Hashtags e.g. spicy, rice, party (comma separated)"
+            value={formData.hashtags}
+            onChange={handleChange}
+          />
+
+          {/* Image Upload */}
+          <div className="mt-5">
+            <label className="font-bold block mb-2">Food Image</label>
+
+            {/* Preview */}
+            {preview && (
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-48 object-cover rounded-xl border-2 border-black mb-3"
+              />
+            )}
+
+            {/* Upload button */}
+            <label className="w-full border-2 border-dashed border-black rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition">
+              <span className="font-bold text-gray-600">
+                {preview ? "Change Image" : "Click to Upload Image"}
+              </span>
+              <span className="text-sm text-gray-400 mt-1">
+                JPG, PNG supported
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden" // hides the ugly default input, label acts as button
+              />
+            </label>
+          </div>
+
+          {/* Negotiable toggle */}
+          <div className="flex items-center gap-3 mt-5">
+            <input
+              type="checkbox"
+              name="is_negotiable"
+              id="is_negotiable"
+              checked={formData.is_negotiable}
+              onChange={handleChange}
+              className="w-5 h-5 cursor-pointer"
+            />
+            <label htmlFor="is_negotiable" className="font-bold cursor-pointer">
+              Price is Negotiable
+            </label>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 mt-6">
+            <button
+              type="submit"
+              className="flex-1 bg-black text-white py-2 rounded-xl font-bold hover:bg-gray-800 transition"
+            >
+              Create Listing
+            </button>
+            <Link
+              to="/dashboard"
+              className="flex-1 border-2 border-black text-center py-2 rounded-xl font-bold hover:bg-black hover:text-white transition"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </div>
+    </>
+  );
+}
+
+export default CreateListing;
