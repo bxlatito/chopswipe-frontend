@@ -3,25 +3,13 @@
 body {
   position: relative;
   background-image: url('../src/assets/dining.jpg');
-  background-size: auto 100%; /* Changed from 'cover' - no zoom on mobile */
+  background-size: auto 100%; /* Prevents zoom on mobile */
   background-position: center;
-  background-repeat: no-repeat; /* Added */
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
-/* Simpler overlay without z-index issues */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-}
-
-/* For tablets and desktop, use cover */
+/* For tablets and desktop */
 @media (min-width: 768px) {
   body {
     background-size: cover;
