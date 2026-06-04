@@ -101,7 +101,7 @@ function Homepage() {
               </div>
             </div>
 
-            <div className="flex flex-row justify-center gap-8 mt-8 w-full max-w-md">
+            <div className="flex flex-row justify-center gap-8 mt-4 w-full max-w-md">
               <SwipingButton direction="left" onClick={() => handleSwipe("left")} />
               <SwipingButton direction="right" onClick={() => handleSwipe("right")} />
             </div>
